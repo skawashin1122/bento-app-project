@@ -3,6 +3,7 @@
 // ============================================
 const API_BASE_URL = 'http://localhost:8000';
 let menusData = [];
+let cart = {}; // カート: {menuId: quantity}
 
 // ============================================
 // 初期化処理
@@ -14,12 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 注文フォームのイベントリスナー
     const orderForm = document.getElementById('order-form');
     orderForm.addEventListener('submit', handleOrderSubmit);
-    
-    // メニュー選択と数量変更のイベントリスナー
-    const menuSelect = document.getElementById('menu-select');
-    const quantityInput = document.getElementById('quantity');
-    menuSelect.addEventListener('change', updateTotalPrice);
-    quantityInput.addEventListener('input', updateTotalPrice);
     
     // 注文履歴表示ボタンのイベントリスナー
     const loadHistoryBtn = document.getElementById('load-history-btn');
@@ -65,9 +60,6 @@ async function loadMenus() {
         // メニューカードを表示
         displayMenuCards(menusData);
         
-        // セレクトボックスにメニューを追加
-        populateMenuSelect(menusData);
-        
     } catch (error) {
         console.error('メニュー取得エラー:', error);
         menuList.innerHTML = `<p class="error-message">メニューの読み込みに失敗しました: ${error.message}</p>`;
@@ -85,43 +77,110 @@ function displayMenuCards(menus) {
             <h3>${menu.name}</h3>
             <div class="price">¥${menu.price.toLocaleString()}</div>
             <p class="description">${menu.description || '説明なし'}</p>
+            <div class="quantity-controls">
+                <button type="button" class="quantity-btn quantity-minus" onclick="updateQuantity(${menu.id}, -1)">-</button>
+                <span class="quantity-display" id="quantity-${menu.id}">0</span>
+                <button type="button" class="quantity-btn quantity-plus" onclick="updateQuantity(${menu.id}, 1)">+</button>
+            </div>
             <span class="menu-id">ID: ${menu.id}</span>
         </div>
     `).join('');
 }
 
+// ============================================
+// カート関連の関数
+// ============================================
+
 /**
- * セレクトボックスにメニューを追加
+ * 数量を更新する
  */
-function populateMenuSelect(menus) {
-    const menuSelect = document.getElementById('menu-select');
+function updateQuantity(menuId, change) {
+    const currentQuantity = cart[menuId] || 0;
+    const newQuantity = Math.max(0, currentQuantity + change);
     
-    // 既存のオプション（最初の選択肢）以外をクリア
-    menuSelect.innerHTML = '<option value="">-- メニューを選択してください --</option>';
+    if (newQuantity === 0) {
+        delete cart[menuId];
+    } else {
+        cart[menuId] = newQuantity;
+    }
     
-    menus.forEach(menu => {
-        const option = document.createElement('option');
-        option.value = menu.id;
-        option.textContent = `${menu.name} (¥${menu.price.toLocaleString()})`;
-        option.dataset.price = menu.price;
-        menuSelect.appendChild(option);
-    });
+    // UI更新
+    updateQuantityDisplay(menuId, newQuantity);
+    updateCartDisplay();
 }
 
 /**
- * 合計金額を更新
+ * 数量表示を更新
  */
-function updateTotalPrice() {
-    const menuSelect = document.getElementById('menu-select');
-    const quantityInput = document.getElementById('quantity');
-    const totalPriceDisplay = document.getElementById('total-price');
+function updateQuantityDisplay(menuId, quantity) {
+    const quantityDisplay = document.getElementById(`quantity-${menuId}`);
+    if (quantityDisplay) {
+        quantityDisplay.textContent = quantity;
+    }
+}
+
+/**
+ * カート表示を更新
+ */
+function updateCartDisplay() {
+    const cartContent = document.getElementById('cart-content');
+    const cartSummary = document.getElementById('cart-summary');
+    const orderForm = document.getElementById('order-form');
+    const totalItemsDisplay = document.getElementById('total-items');
+    const cartTotalPriceDisplay = document.getElementById('cart-total-price');
     
-    const selectedOption = menuSelect.options[menuSelect.selectedIndex];
-    const price = selectedOption ? parseInt(selectedOption.dataset.price) || 0 : 0;
-    const quantity = parseInt(quantityInput.value) || 0;
+    const cartItems = Object.entries(cart);
     
-    const totalPrice = price * quantity;
-    totalPriceDisplay.textContent = `¥${totalPrice.toLocaleString()}`;
+    if (cartItems.length === 0) {
+        // カートが空の場合
+        cartContent.innerHTML = `
+            <div class="cart-empty">
+                <p>カートに商品がありません</p>
+                <p class="cart-help">上記のメニューから「+」ボタンを押して商品を追加してください</p>
+            </div>
+        `;
+        cartSummary.style.display = 'none';
+        orderForm.style.display = 'none';
+        return;
+    }
+    
+    // カートの内容を表示
+    let totalItems = 0;
+    let totalPrice = 0;
+    
+    const cartItemsHTML = cartItems.map(([menuId, quantity]) => {
+        const menu = menusData.find(m => m.id == menuId);
+        if (!menu) return '';
+        
+        const itemTotal = menu.price * quantity;
+        totalItems += quantity;
+        totalPrice += itemTotal;
+        
+        return `
+            <div class="cart-item">
+                <div class="cart-item-info">
+                    <h4>${menu.name}</h4>
+                    <p class="cart-item-price">¥${menu.price.toLocaleString()} × ${quantity}</p>
+                </div>
+                <div class="cart-item-controls">
+                    <button type="button" class="cart-btn cart-minus" onclick="updateQuantity(${menuId}, -1)">-</button>
+                    <span class="cart-quantity">${quantity}</span>
+                    <button type="button" class="cart-btn cart-plus" onclick="updateQuantity(${menuId}, 1)">+</button>
+                </div>
+                <div class="cart-item-total">¥${itemTotal.toLocaleString()}</div>
+            </div>
+        `;
+    }).join('');
+    
+    cartContent.innerHTML = cartItemsHTML;
+    
+    // サマリー更新
+    totalItemsDisplay.textContent = totalItems;
+    cartTotalPriceDisplay.textContent = `¥${totalPrice.toLocaleString()}`;
+    
+    // 表示制御
+    cartSummary.style.display = 'flex';
+    orderForm.style.display = 'block';
 }
 
 // ============================================
@@ -135,8 +194,6 @@ async function handleOrderSubmit(e) {
     e.preventDefault();
     
     const userName = document.getElementById('user-name').value.trim();
-    const menuId = parseInt(document.getElementById('menu-select').value);
-    const quantity = parseInt(document.getElementById('quantity').value);
     
     // バリデーション
     if (!userName) {
@@ -144,50 +201,63 @@ async function handleOrderSubmit(e) {
         return;
     }
     
-    if (!menuId) {
-        showModal('メニューを選択してください。', 'error');
-        return;
-    }
-    
-    if (quantity < 1) {
-        showModal('数量は1以上を指定してください。', 'error');
+    const cartItems = Object.entries(cart);
+    if (cartItems.length === 0) {
+        showModal('カートに商品を追加してください。', 'error');
         return;
     }
     
     try {
-        const response = await fetch(`${API_BASE_URL}/api/orders`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                user_name: userName,
-                menu_id: menuId,
-                quantity: quantity
-            })
+        // 複数の注文を順次送信
+        const orderPromises = cartItems.map(([menuId, quantity]) => {
+            return fetch(`${API_BASE_URL}/api/orders`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_name: userName,
+                    menu_id: parseInt(menuId),
+                    quantity: quantity
+                })
+            });
         });
         
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || '注文の送信に失敗しました');
+        const responses = await Promise.all(orderPromises);
+        
+        // すべてのレスポンスが成功したかチェック
+        for (const response of responses) {
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || '注文の送信に失敗しました');
+            }
         }
         
-        const orderData = await response.json();
+        const orders = await Promise.all(responses.map(r => r.json()));
         
         // 成功メッセージを表示
+        const totalPrice = orders.reduce((sum, order) => sum + order.total_price, 0);
+        const totalItems = orders.reduce((sum, order) => sum + order.quantity, 0);
+        
         showModal(
             `注文が完了しました！<br><br>
-            <strong>注文ID:</strong> ${orderData.id}<br>
-            <strong>メニュー:</strong> ${orderData.menu_name}<br>
-            <strong>数量:</strong> ${orderData.quantity}<br>
-            <strong>合計金額:</strong> ¥${orderData.total_price.toLocaleString()}<br>
-            <strong>注文日時:</strong> ${formatDateTime(orderData.ordered_at)}`,
+            <strong>合計商品数:</strong> ${totalItems}個<br>
+            <strong>合計金額:</strong> ¥${totalPrice.toLocaleString()}<br>
+            <strong>注文日時:</strong> ${formatDateTime(orders[0].ordered_at)}`,
             'success'
         );
         
+        // カートをクリア
+        cart = {};
+        updateCartDisplay();
+        
+        // 全ての数量表示をリセット
+        menusData.forEach(menu => {
+            updateQuantityDisplay(menu.id, 0);
+        });
+        
         // フォームをリセット
         document.getElementById('order-form').reset();
-        updateTotalPrice();
         
     } catch (error) {
         console.error('注文送信エラー:', error);

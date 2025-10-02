@@ -1,0 +1,501 @@
+/* ============================================
+   共通スタイル
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* カラーパレット */
+    --primary-color: #4a90e2;
+    --primary-dark: #357abd;
+    --secondary-color: #7b68ee;
+    --success-color: #5cb85c;
+    --danger-color: #d9534f;
+    --warning-color: #f0ad4e;
+    
+    --background-color: #f5f7fa;
+    --card-background: #ffffff;
+    --text-primary: #2c3e50;
+    --text-secondary: #7f8c8d;
+    --border-color: #e1e8ed;
+    
+    /* スペーシング */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* シャドウ */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
+    
+    /* ボーダー */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+    width: 100%;
+}
+
+/* ============================================
+   ヘッダー
+   ============================================ */
+header {
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-md);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 700;
+}
+
+header .subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* ============================================
+   メインコンテンツ
+   ============================================ */
+main {
+    flex: 1;
+}
+
+section {
+    background: var(--card-background);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+}
+
+section h2 {
+    font-size: 1.8rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: var(--spacing-sm);
+}
+
+/* ============================================
+   メニューセクション
+   ============================================ */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.menu-card {
+    background: var(--card-background);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.menu-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.menu-card h3 {
+    font-size: 1.4rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.menu-card .price {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    font-weight: 700;
+    margin: var(--spacing-sm) 0;
+}
+
+.menu-card .description {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.menu-card .menu-id {
+    display: inline-block;
+    background: var(--background-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-sm);
+}
+
+/* ============================================
+   注文フォーム
+   ============================================ */
+.order-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.required {
+    color: var(--danger-color);
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--card-background);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.price-display {
+    background: var(--background-color);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+.total-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-top: var(--spacing-xs);
+}
+
+/* ============================================
+   ボタン
+   ============================================ */
+.btn {
+    display: inline-block;
+    padding: 0.875rem 2rem;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    width: 100%;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #6a5acd;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   注文履歴
+   ============================================ */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.history-header h2 {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.history-header .btn {
+    width: auto;
+    padding: 0.75rem 1.5rem;
+}
+
+.order-history {
+    margin-top: var(--spacing-md);
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--spacing-md);
+}
+
+.history-table th,
+.history-table td {
+    padding: var(--spacing-sm);
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.history-table th {
+    background: var(--background-color);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.history-table tr:hover {
+    background: var(--background-color);
+}
+
+.history-table .price-cell {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.history-table .date-cell {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* ============================================
+   メッセージ
+   ============================================ */
+.loading,
+.info-message,
+.error-message {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+.loading {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.info-message {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.error-message {
+    background: #ffebee;
+    color: var(--danger-color);
+}
+
+/* ============================================
+   モーダル
+   ============================================ */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: var(--card-background);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    animation: slideIn 0.3s ease;
+}
+
+.close-btn {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-md);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: var(--text-primary);
+}
+
+.modal-message {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.modal-message.success {
+    color: var(--success-color);
+}
+
+.modal-message.error {
+    color: var(--danger-color);
+}
+
+/* ============================================
+   フッター
+   ============================================ */
+footer {
+    text-align: center;
+    padding: var(--spacing-lg);
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xl);
+}
+
+/* ============================================
+   アニメーション
+   ============================================ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ============================================
+   レスポンシブデザイン
+   ============================================ */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    header .subtitle {
+        font-size: 1rem;
+    }
+    
+    section {
+        padding: var(--spacing-md);
+    }
+    
+    section h2 {
+        font-size: 1.5rem;
+    }
+    
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .history-header {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .history-header .btn {
+        width: 100%;
+    }
+    
+    .history-table {
+        font-size: 0.9rem;
+    }
+    
+    .history-table th,
+    .history-table td {
+        padding: var(--spacing-xs);
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    header {
+        padding: var(--spacing-lg) var(--spacing-sm);
+    }
+    
+    header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .menu-card h3 {
+        font-size: 1.2rem;
+    }
+    
+    .menu-card .price {
+        font-size: 1.5rem;
+    }
+}

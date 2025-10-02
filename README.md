@@ -54,7 +54,7 @@ test-app/
 
 1. **リポジトリのクローン**（または既存ディレクトリに移動）
 ```powershell
-cd c:\Users\mk941574\Desktop\test-app
+cd c:\Users\skawashin\Desktop\bento-app-project
 ```
 
 2. **Docker環境の起動**
